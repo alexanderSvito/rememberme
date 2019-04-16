@@ -72,7 +72,6 @@ class Guesser:
     def incorrect(self):
         self.current.incorrect += 1
         self.next_word()
-        if
 
     def next_word(self):
         try:
