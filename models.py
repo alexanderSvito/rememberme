@@ -10,10 +10,24 @@ class Pair:
     user_id: int
     correct: Decimal
     incorrect: Decimal
+    correct_letters: Decimal
+    incorrect_letters: Decimal
 
-    def sigmoid(self, x):
-        return 1.0 / (1 + exp(-x))
+    @property
+    def correct_rate(self):
+        if self.incorrect == 0:
+            return 1.0
+        return self.correct_letters / self.incorrect / len(self.response)
+
+    @property
+    def incorrect_rate(self):
+        if self.incorrect == 0:
+            return 1.0
+        return self.incorrect_letters / self.incorrect / len(self.response)
 
     @property
     def score(self):
-        return self.sigmoid(self.incorrect - self.correct)
+        return self.sigmoid(self.incorrect * self.correct_rate - self.correct * self.incorrect_rate)
+
+    def sigmoid(self, x):
+        return 1.0 / (1 + exp(-x))

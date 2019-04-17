@@ -3,40 +3,46 @@ import difflib
 from operator import attrgetter
 from dataclasses import dataclass
 
-from sqlite import SQLighter
-import config
-
-
-db = SQLighter(config.words_db)
+from exceptions import NotEnoughWords
+from helpers import get_correction
 
 
 @dataclass
 class Guesser:
-    user_id: int
+    manager: object
+
     current = None
     words = []
     new_words = []
+    finished = False
 
-    def start(self):
-        selected_words = self.get_words()
+    count = 0
+    guessed = 0
+    wrong_letters = 0
+
+    def start(self, count=10):
+        selected_words = self.get_words(count)
+
         if not selected_words:
-            raise ValueError("There is no words in your dictinary now, please add one")
+            raise NotEnoughWords()
 
         random.shuffle(selected_words)
         self.words = iter(selected_words)
         self.current = next(self.words)
 
-        return self.current.anchor
+        return "Начали! Первое слово:\n" + self.current.anchor.capitalize()
 
-    def get_words(self, num=3):
-        words = db.get_words_for_user(self.user_id)
+    def get_words(self, count):
+        words = self.manager.db.get_words()
         worst_words = sorted(words, key=attrgetter('score'))
 
-        return self.select(worst_words, num)
+        return self.select(worst_words, count)
 
-    def select(self, objects, count=3):
+    def select(self, objects, count):
         if not objects:
             return []
+
+        self.count = min(len(objects), count)
 
         if len(objects) < count:
             return objects
@@ -67,10 +73,14 @@ class Guesser:
 
     def correct(self):
         self.current.correct += 1
+        self.guessed += 1
         self.next_word()
 
-    def incorrect(self):
+    def incorrect(self, incorrect_letters, correct_letters):
         self.current.incorrect += 1
+        self.current.incorrect_letters += incorrect_letters
+        self.current.correct_letters += correct_letters
+        self.wrong_letters += incorrect_letters
         self.next_word()
 
     def next_word(self):
@@ -78,24 +88,37 @@ class Guesser:
             self.new_words.append(self.current)
             self.current = next(self.words)
         except StopIteration:
-            db.update_words(self.user_id, self.new_words)
+            self.finished = True
+
+    def finish(self):
+        self.manager.db.update_words(self.new_words)
+        self.manager.stop()
+
+    def get_response(self, is_correct, correct_word=None, next_word=None):
+        response = ''
+        if is_correct:
+            response += "Правильно!"
+        else:
+            response += "Неверно:\n" + correct_word
+
+        if self.finished:
+            self.finish()
+            response += (
+                f"\nИгра окончена:\nУгадано {self.guessed} "
+                f"слов, среднее количество ошибок в слове: {int(self.wrong_letters / self.count)}"
+            )
+        else:
+            response += '\nСледующее слово:\n' + next_word.capitalize()
+
+        return response
 
     def guess(self, word):
         current_word = self.current
 
         if current_word.response.lower() == word.lower():
             self.correct()
-            return "Correct:\n" + self.current.anchor
+            return self.get_response(True, None, self.current.anchor)
         else:
-            diff = difflib.ndiff(word.lower(), current_word.response.lower())
-            res = ''
-            for letter in diff:
-                if letter.startswith('-'):
-                    res += letter[-1] + '\u0336'
-                elif letter.startswith('+'):
-                    res += letter[-1] + '\u0332'
-                else:
-                    res += letter[-1]
-
-            self.incorrect()
-            return res + '\n' + self.current.anchor
+            res, correct, incorrect = get_correction(word, current_word.response)
+            self.incorrect(incorrect, correct)
+            return self.get_response(False, res, self.current.anchor)

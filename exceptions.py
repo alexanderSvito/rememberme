@@ -1,0 +1,2 @@
+class NotEnoughWords(Exception):
+    pass
