@@ -1,5 +1,4 @@
 import random
-import difflib
 from operator import attrgetter
 from dataclasses import dataclass
 
@@ -30,7 +29,7 @@ class Guesser:
         self.words = iter(selected_words)
         self.current = next(self.words)
 
-        return "Начали! Первое слово:\n" + self.current.anchor.capitalize()
+        return self.current.anchor.capitalize()
 
     def get_words(self, count):
         words = self.manager.db.get_words()
@@ -89,36 +88,21 @@ class Guesser:
             self.current = next(self.words)
         except StopIteration:
             self.finished = True
+            self.finish()
 
     def finish(self):
         self.manager.db.update_words(self.new_words)
-        self.manager.stop()
-
-    def get_response(self, is_correct, correct_word=None, next_word=None):
-        response = ''
-        if is_correct:
-            response += "Правильно!"
-        else:
-            response += "Неверно:\n" + correct_word
-
-        if self.finished:
-            self.finish()
-            response += (
-                f"\nИгра окончена:\nУгадано {self.guessed} "
-                f"слов, среднее количество ошибок в слове: {int(self.wrong_letters / self.count)}"
-            )
-        else:
-            response += '\nСледующее слово:\n' + next_word.capitalize()
-
-        return response
 
     def guess(self, word):
         current_word = self.current
+        is_correct = False
+        res = None
 
         if current_word.response.lower() == word.lower():
             self.correct()
-            return self.get_response(True, None, self.current.anchor)
+            is_correct = True
         else:
             res, correct, incorrect = get_correction(word, current_word.response)
             self.incorrect(incorrect, correct)
-            return self.get_response(False, res, self.current.anchor)
+
+        return is_correct, self.finished, res, self.current.anchor, self.count, int(self.wrong_letters / self.count)

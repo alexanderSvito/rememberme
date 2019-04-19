@@ -4,6 +4,7 @@ import random
 import json
 from dataclasses import dataclass
 
+from exceptions import NoConjugation
 from helpers import get_correction
 
 CONJ_DIR = os.path.join(
@@ -32,22 +33,33 @@ class Conjuctor:
     def conj(self):
         return self._conj
 
+    @property
+    def term(self):
+        return self._term
+
+    @property
+    def translations(self):
+        return self.current['translations']
+
     @current.setter
     def current(self, value):
-        self._current = json.load(open(
-            os.path.join(
-                CONJ_DIR,
-                value
-            )
-        ))
+        try:
+            self._current = json.load(open(
+                os.path.join(
+                    CONJ_DIR,
+                    value
+                )
+            ))
+        except FileNotFoundError:
+            raise NoConjugation()
         term = random.choice(list(self._current['conj'].keys()))
         form = random.choice(list(self._current['conj'][term]['conj'].keys()))
         self._term = self._current['conj'][term]['russian_form']
         self._conj = form, self._current['conj'][term]['conj'][form]
 
-    def translate(self, word):
+    def conjugate(self, word):
         self.current = word + '.json'
-        return self.current['translations']
+        return self.current['conj']
 
     def start(self, count):
         self.files = os.listdir(
@@ -61,11 +73,7 @@ class Conjuctor:
         ))
         self.current = next(self.words)
 
-        return (
-            f"Начали, первое слово:\n"
-            f"Форма - {self._term}\n"
-            f"{self.conj[0]} ({self.current['word']})"
-        )
+        return self.translations, self.term, self.conj[0], self.current['word']
 
     def next_word(self):
         try:
@@ -75,21 +83,20 @@ class Conjuctor:
             self.manager.stop()
 
     def guess(self, form):
+        is_correct = False
+        correction = None
+        is_game_finished = False
+        correct_count = None
+
         if self.conj[1].lower() == form.lower():
-            result = 'Правильно!'
             self.correct += 1
         else:
             correction, _, _ = get_correction(form, self.conj[1])
-            result = f'Неверно, правильный вариант:\n{correction}'
 
         self.next_word()
 
         if self.finished:
-            result += f'\nИгра закончена, вы правильно назвали {self.correct} слов.'
-        else:
-            result += (
-                f"\nСледующее слово:\n"
-                f"Форма - {self._term}\n"
-                f"{self.conj[0]} ({self.current['word']})"
-            )
-        return result
+            is_game_finished = True
+            correct_count = self.correct
+
+        return is_correct, correction, is_game_finished, correct_count
