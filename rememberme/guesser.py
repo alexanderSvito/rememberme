@@ -2,8 +2,8 @@ import random
 from operator import attrgetter
 from dataclasses import dataclass
 
-from exceptions import NotEnoughWords
-from helpers import get_correction
+from rememberme.exceptions import NotEnoughWords
+from rememberme.helpers import get_correction
 
 
 @dataclass
@@ -33,7 +33,12 @@ class Guesser:
 
     def get_words(self, count):
         words = self.manager.db.get_words()
-        worst_words = sorted(words, key=attrgetter('score'))
+        worst_words = list(
+            reversed(
+                sorted(words, key=attrgetter('score'))
+            )
+        )
+        print(worst_words[:10])
 
         return self.select(worst_words, count)
 
@@ -49,6 +54,8 @@ class Guesser:
         results = []
         for i in range(count):
             pair = self.pick(objects)
+            print(pair)
+            print(pair.score)
             results.append(pair)
             objects.remove(pair)
 

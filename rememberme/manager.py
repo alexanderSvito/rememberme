@@ -1,10 +1,10 @@
 import re
 
-from exceptions import NotEnoughWords, NoConjugation
-from guesser import Guesser
-from sqlite import SQLighter
-from conj import Conjuctor
-from translator import Translator
+from rememberme.exceptions import NotEnoughWords, NoConjugation
+from rememberme.guesser import Guesser
+from data.sqlite import SQLighter
+from rememberme.conj import Conjuctor
+from rememberme.translator import Translator
 
 
 class Manager:

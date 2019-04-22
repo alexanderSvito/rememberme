@@ -4,8 +4,8 @@ import random
 import json
 from dataclasses import dataclass
 
-from exceptions import NoConjugation
-from helpers import get_correction
+from rememberme.exceptions import NoConjugation
+from rememberme.helpers import get_correction
 
 CONJ_DIR = os.path.join(
     config.BASE_DIR,

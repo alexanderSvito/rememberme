@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import sqlite3
 
 
-from models import Pair
+from rememberme.models import Pair
 import config
 
 

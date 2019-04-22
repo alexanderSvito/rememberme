@@ -1,6 +1,6 @@
 import telebot
 import config
-from manager import Manager
+from rememberme.manager import Manager
 
 
 bot = telebot.TeleBot(config.TOKEN)
