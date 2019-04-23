@@ -46,8 +46,8 @@ class Manager:
         self.mode = 'guess'
         game = Guesser(self)
         self.broker = game
-        word = game.start(count)
-        return self.responser.get_start_guess_response(word)
+        word, stats = game.start(count)
+        return self.responser.get_start_guess_response(word, stats)
 
     @parser(r'^/add\s(?P<anchor>[\w_,()-]+)\s(?P<response>[\w_,()-]+)$')
     def add_word(self, anchor, response):

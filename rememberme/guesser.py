@@ -29,7 +29,10 @@ class Guesser:
         self.words = iter(selected_words)
         self.current = next(self.words)
 
-        return self.current.anchor.capitalize()
+        return self.current.anchor.capitalize(), [
+            (pair.anchor, pair.response, pair.score)
+            for pair in selected_words
+        ]
 
     def get_words(self, count):
         words = self.manager.db.get_words()

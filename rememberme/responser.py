@@ -34,14 +34,14 @@ class Responser:
             res += '\n'
         return res
 
-    def get_start_guess_response(self, word):
+    def get_start_guess_response(self, word, stats):
         if word is None:
             return msg.NO_WORDS_MSG
 
         scheme = self.fill_schema(GUESSER_START_SCHEME)
         return scheme.format(
             round=word
-        )
+        ) + '\n' + str(stats)
 
     def get_same_word_response(self, anchor, response):
         scheme = self.fill_schema(SAME_WORD_SCHEME)
