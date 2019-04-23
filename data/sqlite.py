@@ -30,6 +30,30 @@ class SQLighter:
                 """,
                 (self.user_id, word_anchor, word_response)
             )
+        return word_anchor, word_response
+
+    def edit_word_pair(self, word_anchor, word_response):
+        with self.conncetion as c:
+            c.cursor().execute(
+                f"""
+                UPDATE words
+                    SET response = ?, correct = 0, incorrect = 0, correct_letters =0, incorrect_letters = 0
+                WHERE user_id = ? AND anchor = ?
+                """,
+                (word_response, self.user_id, word_anchor)
+            )
+        return word_anchor, word_response
+
+    def del_word_pair(self, word_anchor, word_response):
+        with self.conncetion as c:
+            c.cursor().execute(
+                f"""
+                    DELETE FROM words
+                    WHERE user_id = ? AND anchor = ? AND response = ?
+                """,
+                (self.user_id, word_anchor, word_response)
+            )
+        return True
 
     def update_words(self, words):
         with self.conncetion as c:

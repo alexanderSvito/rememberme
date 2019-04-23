@@ -70,6 +70,20 @@ def handle_add(message):
     bot.send_message(message.chat.id, response)
 
 
+@bot.message_handler(commands=['edit'])
+@start_required
+def handle_edit(message):
+    response = sessions[message.from_user.id].edit_word(message.text)
+    bot.send_message(message.chat.id, response)
+
+
+@bot.message_handler(commands=['del'])
+@start_required
+def handle_del(message):
+    response = sessions[message.from_user.id].del_word(message.text)
+    bot.send_message(message.chat.id, response)
+
+
 @bot.message_handler(commands=['stop'])
 @start_required
 def handle_stop(message):

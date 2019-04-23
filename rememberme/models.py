@@ -17,7 +17,7 @@ class Pair:
     def correct_rate(self):
         if self.incorrect == 0:
             return 1.0
-        return self.correct_letters / self.incorrect / len(self.response)
+        return self.correct * self.correct_letters / self.incorrect / len(self.response)
 
     @property
     def incorrect_rate(self):

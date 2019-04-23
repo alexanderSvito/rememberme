@@ -23,6 +23,7 @@ class Conjuctor:
     _term = None
     _conj = None
     correct = 0
+    initial_count = 0
     finished = False
 
     @property
@@ -58,7 +59,10 @@ class Conjuctor:
         self._conj = form, self._current['conj'][term]['conj'][form]
 
     def conjugate(self, word):
-        self.current = word + '.json'
+        try:
+            self.current = word + '.json'
+        except NoConjugation:
+            return None
         return self.current['conj']
 
     def start(self, count):
@@ -66,6 +70,7 @@ class Conjuctor:
             CONJ_DIR
         )
         self.correct = 0
+        self.initial_count = count
 
         self.words = iter(random.sample(
             self.files,
@@ -99,4 +104,12 @@ class Conjuctor:
             is_game_finished = True
             correct_count = self.correct
 
-        return is_correct, correction, is_game_finished, correct_count
+        return is_correct, is_game_finished, {
+            "correction": correction,
+            "correct_count": correct_count,
+            "translations": self.translations,
+            "error_rate": round((self.initial_count - self.correct) / self.initial_count, 2),
+            "term": self.term,
+            "conj": self.conj[0],
+            "round": self.current['word']
+        }

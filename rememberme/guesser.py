@@ -23,7 +23,7 @@ class Guesser:
         selected_words = self.get_words(count)
 
         if not selected_words:
-            raise NotEnoughWords()
+            return None
 
         random.shuffle(selected_words)
         self.words = iter(selected_words)
@@ -38,7 +38,6 @@ class Guesser:
                 sorted(words, key=attrgetter('score'))
             )
         )
-        print(worst_words[:10])
 
         return self.select(worst_words, count)
 
@@ -54,8 +53,6 @@ class Guesser:
         results = []
         for i in range(count):
             pair = self.pick(objects)
-            print(pair)
-            print(pair.score)
             results.append(pair)
             objects.remove(pair)
 
@@ -99,6 +96,7 @@ class Guesser:
 
     def finish(self):
         self.manager.db.update_words(self.new_words)
+        self.manager.stop()
 
     def guess(self, word):
         current_word = self.current
@@ -112,4 +110,9 @@ class Guesser:
             res, correct, incorrect = get_correction(word, current_word.response)
             self.incorrect(incorrect, correct)
 
-        return is_correct, self.finished, res, self.current.anchor, self.count, int(self.wrong_letters / self.count)
+        return is_correct, self.finished, {
+            "correction": res,
+            "round": self.current.anchor,
+            "correct_count": self.count,
+            "error_rate": round(self.wrong_letters / self.count, 2)
+        }
