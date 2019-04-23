@@ -47,7 +47,7 @@ class Manager:
         game = Guesser(self)
         self.broker = game
         word, stats = game.start(count)
-        return self.responser.get_start_guess_response(word, stats)
+        return self.responser.get_start_guess_response(word)
 
     @parser(r'^/add\s(?P<anchor>[\w_,()-]+)\s(?P<response>[\w_,()-]+)$')
     def add_word(self, anchor, response):
@@ -64,18 +64,20 @@ class Manager:
         if anchor.lower() == response.lower():
             return self.responser.get_same_word_response(anchor, response)
         try:
-            anchor, response = self.db.edit_word_pair(anchor.lower(), response.lower())
+            count = self.db.edit_word_pair(anchor.lower(), response.lower())
         except:
-            anchor, response = None, None
-        return self.responser.get_edited_response(anchor, response)
+            count = 0
+
+        return self.responser.get_edited_response(count, anchor, response)
 
     @parser(r'^/del\s(?P<anchor>[\w_,()-]+)\s(?P<response>[\w_,()-]+)$')
     def del_word(self, anchor, response):
         try:
-            is_success = self.db.del_word_pair(anchor.lower(), response.lower())
+            count = self.db.del_word_pair(anchor.lower(), response.lower())
         except:
-            is_success = False
-        return self.responser.get_deleted_response(is_success, anchor, response)
+            count = 0
+
+        return self.responser.get_deleted_response(count, anchor, response)
 
     def dispatch(self, message):
         if self.mode == 'idle':

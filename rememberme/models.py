@@ -27,7 +27,7 @@ class Pair:
 
     @property
     def score(self):
-        return self.sigmoid(self.incorrect * self.incorrect_rate - self.correct * self.correct_rate)
+        return self.sigmoid(self.incorrect - self.correct)
 
     def sigmoid(self, x):
         return 1.0 / (1 + exp(-x))

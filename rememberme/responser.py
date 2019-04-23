@@ -34,14 +34,14 @@ class Responser:
             res += '\n'
         return res
 
-    def get_start_guess_response(self, word, stats):
+    def get_start_guess_response(self, word):
         if word is None:
             return msg.NO_WORDS_MSG
 
         scheme = self.fill_schema(GUESSER_START_SCHEME)
         return scheme.format(
             round=word
-        ) + '\n' + str(stats)
+        )
 
     def get_same_word_response(self, anchor, response):
         scheme = self.fill_schema(SAME_WORD_SCHEME)
@@ -95,9 +95,12 @@ class Responser:
 
         return scheme.format(**kwargs)
 
-    def get_edited_response(self, anchor, response):
+    def get_edited_response(self, count, anchor, response):
         if anchor is None or response is None:
             return msg.DATABASE_ERROR_MSG
+
+        if count == 0:
+            return msg.NOT_FOUND
 
         scheme = self.fill_schema(EDITED_SCHEME)
         return scheme.format(
@@ -105,9 +108,12 @@ class Responser:
             response=response
         )
 
-    def get_deleted_response(self, is_success, anchor, response):
-        if not is_success:
+    def get_deleted_response(self, count, anchor, response):
+        if anchor is None or response is None:
             return msg.DATABASE_ERROR_MSG
+
+        if count == 0:
+            return msg.NOT_FOUND
 
         scheme = self.fill_schema(DELETED_SCHEME)
         return scheme.format(

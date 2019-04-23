@@ -8,7 +8,16 @@ class CommandParser:
         result = re.match(pattern, message)
         if result is None:
             raise ValueError
-        return result.groupdict()
+        return self.transform_words(result.groupdict())
+
+    def transform_words(self, data):
+        result = {}
+        for k, v in data.items():
+            if '_' in v:
+                result[k] = ' '.join(v.split('_'))
+            else:
+                result[k] = v
+        return result
 
     def __call__(self, pattern, **kwargs):
         def outer(func):
