@@ -9,12 +9,46 @@ parser = CommandParser()
 
 
 class Manager:
-    responser = Responser()
-
     def __init__(self, user_id):
         self.db = SQLighter(user_id)
         self.mode = 'idle'
         self.broker = None
+        self._lang = 'ru_ru'
+        self.responser = Responser(self.lang)
+
+    @property
+    def lang(self):
+        return self._lang
+
+    @lang.setter
+    def lang(self, value):
+        self._lang = value
+        self.responser = Responser(self.lang)
+
+    def is_play_mode(self):
+        return self.mode != 'idle'
+
+    def start(self):
+        return self.responser.get_welcome_response()
+
+    def set_lang(self, language):
+        if 'ru' in language:
+            self.lang = 'ru_ru'
+            return self.responser.get_language_set_response()
+        elif 'en' in language:
+            self.lang = 'en_en'
+            return self.responser.get_language_set_response()
+        else:
+            return self.responser.get_ambiguous_language_response()
+
+    def get_help(self):
+        return self.responser.get_help_response()
+
+    def get_guesser_start(self):
+        return self.responser.get_guesser_start_response()
+
+    def not_a_game_error(self):
+        return self.responser.get_not_a_game_response()
 
     @parser(r'^/(t|translate)\s(?P<word>.+)$')
     def translate(self, word):
@@ -26,13 +60,9 @@ class Manager:
     def start_game(self, count: int):
         self.mode = 'conj'
         self.broker = Conjuctor(self)
-        trans, term, conj, word = self.broker.start(count)
 
         return self.responser.get_start_conj_response(
-            term,
-            trans,
-            conj,
-            word
+            *self.broker.start(count)
         )
 
     @parser(r'^/conj\s(?P<word>.+)$')
@@ -81,7 +111,7 @@ class Manager:
 
     def dispatch(self, message):
         if self.mode == 'idle':
-            return 'Я вас не понял.'
+            return self.responser.get_default_message()
         elif self.mode == 'guess':
             is_correct, is_finished, data = self.broker.guess(message)
             return self.responser.get_guess_response(
@@ -96,3 +126,4 @@ class Manager:
     def stop(self):
         self.mode = 'idle'
         self.broker = object()
+        return self.responser.get_cancel_response()

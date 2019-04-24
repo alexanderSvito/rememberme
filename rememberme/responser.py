@@ -1,11 +1,47 @@
 import random
+import importlib
 
-import data.messages as msg
 from data.answer_schemas import *
 
 
 class Responser:
-    messages = msg.__dict__
+    def __init__(self, lang):
+        self.lang = lang
+
+        try:
+            msg = importlib.import_module('data.lang.{}'.format(lang))
+        except ImportError:
+            msg = importlib.import_module('data.lang.ru_ru')
+
+        self.messages = msg.__dict__
+        self.msg = msg
+
+    def get_default_message(self):
+        return self.msg.UNKNOWN_MSG
+
+    def get_help_response(self):
+        return self.msg.HELP
+
+    def get_guesser_start_response(self):
+        return self.msg.GUESSER_RULES
+
+    def get_cancel_response(self):
+        return self.msg.CANCEL
+
+    def get_not_a_game_response(self):
+        return None
+
+    def get_welcome_response(self):
+        return self.fill_schema(START_SCHEME)
+
+    def get_language_set_response(self):
+        return self.msg.LANGUAGE_SET
+
+    def get_ambiguous_language_response(self):
+        return self.msg.AMBIGUOUS_LANG
+
+    def get_error_msg(self):
+        return self.msg.PARSE_ERROR_MSG
 
     def get_start_conj_response(self, term, translations, conj, round):
         scheme = self.fill_schema(CONJ_START_SCHEME)
@@ -20,11 +56,11 @@ class Responser:
         if translations:
             return ', '.join(translations)
         else:
-            raise ValueError(msg.TRANSLATION_ERROR_MSG)
+            raise ValueError(self.msg.TRANSLATION_ERROR_MSG)
 
     def get_conj_response(self, conj):
         if conj is None:
-            return msg.NO_CONJUGATION_MSG
+            return self.msg.NO_CONJUGATION_MSG
 
         res = ''
         for time, data in conj.items():
@@ -36,7 +72,7 @@ class Responser:
 
     def get_start_guess_response(self, word):
         if word is None:
-            return msg.NO_WORDS_MSG
+            return self.msg.NO_WORDS_MSG
 
         scheme = self.fill_schema(GUESSER_START_SCHEME)
         return scheme.format(
@@ -52,7 +88,7 @@ class Responser:
 
     def get_created_response(self, anchor, response):
         if anchor is None or response is None:
-            return msg.DATABASE_ERROR_MSG
+            return self.msg.DATABASE_ERROR_MSG
 
         scheme = self.fill_schema(CREATED_SCHEME)
         return scheme.format(
@@ -97,10 +133,10 @@ class Responser:
 
     def get_edited_response(self, count, anchor, response):
         if anchor is None or response is None:
-            return msg.DATABASE_ERROR_MSG
+            return self.msg.DATABASE_ERROR_MSG
 
         if count == 0:
-            return msg.NOT_FOUND
+            return self.msg.NOT_FOUND
 
         scheme = self.fill_schema(EDITED_SCHEME)
         return scheme.format(
@@ -110,10 +146,10 @@ class Responser:
 
     def get_deleted_response(self, count, anchor, response):
         if anchor is None or response is None:
-            return msg.DATABASE_ERROR_MSG
+            return self.msg.DATABASE_ERROR_MSG
 
         if count == 0:
-            return msg.NOT_FOUND
+            return self.msg.NOT_FOUND
 
         scheme = self.fill_schema(DELETED_SCHEME)
         return scheme.format(

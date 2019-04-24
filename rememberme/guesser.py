@@ -116,6 +116,6 @@ class Guesser:
         return is_correct, self.finished, {
             "correction": res,
             "round": self.current.anchor,
-            "correct_count": self.count,
+            "correct_count": self.guessed,
             "error_rate": round(self.wrong_letters / self.count, 2)
         }

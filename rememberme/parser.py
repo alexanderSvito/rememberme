@@ -1,8 +1,5 @@
 import re
 
-from data.messages import PARSE_ERROR_MSG
-
-
 class CommandParser:
     def get_args(self, pattern: str, message: str) -> dict:
         result = re.match(pattern, message)
@@ -35,7 +32,7 @@ class CommandParser:
                     try:
                         return func(that, **kwargs)
                     except TypeError:
-                        return PARSE_ERROR_MSG
+                        return that.responser.get_error_msg()
                 return func(that, **parsed_kwargs)
 
             return inner

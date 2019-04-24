@@ -78,7 +78,7 @@ class Conjuctor:
         ))
         self.current = next(self.words)
 
-        return self.translations, self.term, self.conj[0], self.current['word']
+        return self.term, self.translations, self.conj[0], self.current['word']
 
     def next_word(self):
         try:
