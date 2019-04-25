@@ -1,5 +1,7 @@
 import difflib
 
+import config
+
 
 def get_correction(wrong, right):
     diff = difflib.ndiff(wrong.lower(), right.lower())
@@ -17,5 +19,8 @@ def get_correction(wrong, right):
         else:
             res += letter[-1]
             correct += 1
+
+    if incorrect >= config.ERROR_THRESHOLD * len(wrong):
+        res = right
 
     return res, correct, incorrect

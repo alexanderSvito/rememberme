@@ -52,6 +52,15 @@ class Responser:
             round=round
         )
 
+    def get_add_pack_response(self, is_success):
+        if is_success:
+            return self.msg.ADD_PACK_SUCCESS_MSG
+        else:
+            return self.msg.PACK_NOT_FOUND_MSG
+
+    def get_list_packs_response(self, packs):
+        return '\n'.join([f'> {pack}' for pack in packs])
+
     def get_translate_response(self, translations):
         if translations:
             return ', '.join(translations)

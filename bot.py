@@ -97,8 +97,22 @@ def handle_del(manager, message):
 
 @bot.message_handler(commands=['lang'])
 @with_manager
-def handle_del(manager, message):
+def handle_lang(manager, message):
     response = manager.set_lang(message.text)
+    bot.send_message(message.chat.id, response)
+
+
+@bot.message_handler(commands=['addpack'])
+@with_manager
+def handle_lang(manager, message):
+    response = manager.add_pack(message.text)
+    bot.send_message(message.chat.id, response)
+
+
+@bot.message_handler(commands=['listpacks'])
+@with_manager
+def handle_lang(manager, message):
+    response = manager.list_packs(message.text)
     bot.send_message(message.chat.id, response)
 
 

@@ -1,6 +1,7 @@
 from rememberme.guesser import Guesser
 from data.sqlite import SQLighter
 from rememberme.conj import Conjuctor
+from rememberme.packs import PackManager
 from rememberme.translator import Translator
 from rememberme.parser import CommandParser
 from rememberme.responser import Responser
@@ -63,6 +64,22 @@ class Manager:
 
         return self.responser.get_start_conj_response(
             *self.broker.start(count)
+        )
+
+    @parser(r'^/addpack\s(?P<pack_name>.+)$')
+    def add_pack(self, pack_name: str):
+        pack_manager = PackManager(self.db)
+
+        return self.responser.get_add_pack_response(
+            pack_manager.add_pack(pack_name)
+        )
+
+    @parser(r'^/listpacks$')
+    def list_packs(self):
+        pack_manager = PackManager(self.db)
+
+        return self.responser.get_list_packs_response(
+            pack_manager.get_packs()
         )
 
     @parser(r'^/conj\s(?P<word>.+)$')
