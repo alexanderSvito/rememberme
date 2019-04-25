@@ -32,7 +32,9 @@ HELP = """/start - start session (depricated).
 /play [count=5] - start conjugation game.
 /conj [word] - conjugate polish verb.
 /t(ranslate) [word] - translate polish verb to russian.
-/stop - stop current session (depricated).
+/stop - stop current session.
+/listpacks - list all available word packs.
+/addpack [имя пакета] - add word pack contents to current list.
 /guess [count=10] - start remembering game.
 """
 GUESSER_START = 'Hi, we are going to refresh some words'
