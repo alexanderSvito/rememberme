@@ -36,6 +36,7 @@ class Guesser:
 
     def get_words(self, count):
         words = self.manager.db.get_words()
+        random.shuffle(words)
         worst_words = list(
             reversed(
                 sorted(words, key=attrgetter('score'))
@@ -43,7 +44,7 @@ class Guesser:
         )
 
         return self.select(
-            worst_words,
+            worst_words[:min(len(worst_words), 150)],
             count
         )
 
@@ -69,7 +70,7 @@ class Guesser:
         for obj in objects:
             obj.probability = obj.score / total
 
-        marker = random.random()
+        marker = min(1.0, random.expovariate(21))
         anchor = 0
 
         for obj in objects:
