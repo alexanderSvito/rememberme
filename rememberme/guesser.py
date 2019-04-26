@@ -42,7 +42,10 @@ class Guesser:
             )
         )
 
-        return self.select(worst_words, count)
+        return self.select(
+            worst_words,
+            count
+        )
 
     def select(self, objects, count):
         if not objects:
@@ -70,10 +73,10 @@ class Guesser:
         anchor = 0
 
         for obj in objects:
-            if marker < anchor + obj.score:
+            if marker < anchor + obj.probability:
                 return obj
             else:
-                anchor += obj.score
+                anchor += obj.probability
 
         return objects[-1]
 
