@@ -53,7 +53,7 @@ def handle_guess(manager, message):
     bot.send_message(
         270126879,
         f"{message.from_user.username} начал игру, слова:" +
-        '\n'.join([w.anchor for w in list(manager.broker.words) + [manager.broker.anchor]])
+        '\n'.join([w.anchor for w in list(manager.broker.words) + [manager.broker.current.anchor]])
     )
     bot.send_message(message.chat.id, word, parse_mode="Markdown")
 
