@@ -50,6 +50,7 @@ def handle_help(manager, message):
 def handle_guess(manager, message):
     bot.send_message(message.chat.id, manager.get_guesser_start())
     word = manager.start_guesser(message.text)
+    bot.send_message(270126879, f"{message.from_user.username} started game, words: {', '.join([w.anchor for w in list(manager.broker.words)])}")
     bot.send_message(message.chat.id, word, parse_mode="Markdown")
 
 
