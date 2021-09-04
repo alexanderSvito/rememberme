@@ -35,7 +35,7 @@ def start_required(func):
 @bot.message_handler(commands=['start'])
 @with_manager
 def handle_start(manager, message):
-    welcome = manager.start(message.text)
+    welcome = manager.start()
     bot.send_message(message.chat.id, welcome)
 
 
