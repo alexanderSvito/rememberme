@@ -35,8 +35,8 @@ class Guesser:
         ]
 
     def get_words(self, count):
-        words = self.manager.db.get_words()
-        random.shuffle(words)
+        words = list(reversed(self.manager.db.get_words()))
+
         worst_words = list(
             reversed(
                 sorted(words, key=attrgetter('score'))
@@ -105,12 +105,28 @@ class Guesser:
         self.manager.db.update_words(self.new_words)
         self.manager.stop()
 
+    def is_words_same(self, one, two):
+        one = one.lower()
+        two = two.lower()
+
+        if one.startswith("une") and two.startswith("la"):
+            two = "une" + two[2:]
+        elif one.startswith("la") and two.startswith("une"):
+            two = "la" + two[3:]
+        elif one.startswith("un") and two.startswith("le"):
+            two = "un" + two[2:]
+        elif one.startswith("le") and two.startswith("un"):
+            two = "le" + two[2:]
+
+        return one.lower().encode('utf8') == two.lower().encode('utf8')
+
+
     def guess(self, word):
         current_word = self.current
         is_correct = False
         res = None
 
-        if current_word.response.lower() == word.lower():
+        if self.is_words_same(word, current_word.response):
             self.correct()
             is_correct = True
         else:

@@ -23,4 +23,4 @@ def get_correction(wrong, right):
     if incorrect >= config.ERROR_THRESHOLD * len(wrong):
         res = right
 
-    return res, correct, incorrect
+    return right, correct, incorrect

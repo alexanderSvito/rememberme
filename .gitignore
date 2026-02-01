@@ -1,1 +1,5 @@
-.idea/
+.idea/**/__pycache_/**
+__pycache__
+
+*.pyc
+**.unison*

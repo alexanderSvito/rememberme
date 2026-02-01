@@ -17,7 +17,7 @@ class SQLighter:
 
     def get_words(self):
         with self.conncetion as c:
-            result = c.cursor().execute(f'SELECT * FROM words WHERE user_id = {self.user_id}').fetchall()
+            result = c.cursor().execute(f'SELECT anchor, response, user_id, correct, incorrect, correct_letters, incorrect_letters FROM words WHERE user_id = {self.user_id}').fetchall()
             return [Pair(*data) for data in result]
 
     def insert_word_pair(self, word_anchor, word_response):
@@ -49,9 +49,9 @@ class SQLighter:
             count = c.cursor().execute(
                 f"""
                     DELETE FROM words
-                    WHERE user_id = ? AND anchor = ? AND response = ?
+                    WHERE user_id = ? AND anchor = ?
                 """,
-                (self.user_id, word_anchor.lower(), word_response.lower())
+                (self.user_id, word_anchor.lower())
             )
         return count.rowcount
 
