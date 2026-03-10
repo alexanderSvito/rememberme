@@ -59,7 +59,29 @@ class Responser:
             return self.msg.PACK_NOT_FOUND_MSG
 
     def get_list_packs_response(self, packs):
-        return '\n'.join([f'> {pack}' for pack in packs])
+        if not packs:
+            return 'No packs available.'
+        # packs can be list of tuples (name, count, priority) or list of strings
+        lines = []
+        if packs and isinstance(packs[0], tuple):
+            current_priority = None
+            priority_labels = {
+                1: '🟢 Essential',
+                2: '🔵 Core',
+                3: '🟡 Important',
+                4: '🟠 Useful',
+                5: '🔴 Extra',
+                6: '⚪ Mixed',
+            }
+            for name, count, priority in packs:
+                if priority != current_priority:
+                    current_priority = priority
+                    label = priority_labels.get(priority, f'Level {priority}')
+                    lines.append(f'\n{label}:')
+                lines.append(f'  {name} ({count} words)')
+        else:
+            lines = [f'> {pack}' for pack in packs]
+        return '\n'.join(lines)
 
     def get_translate_response(self, translations):
         if translations:

@@ -1,6 +1,7 @@
 import random
 from operator import attrgetter
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 from rememberme.exceptions import NotEnoughWords
 from rememberme.helpers import get_correction
@@ -9,25 +10,23 @@ from rememberme.helpers import get_correction
 @dataclass
 class Guesser:
     manager: object
-
-    current = None
-    words = []
-    new_words = []
-    finished = False
-
-    count = 0
-    guessed = 0
-    wrong_letters = 0
+    current: Optional[object] = None
+    words: list = field(default_factory=list)
+    new_words: list = field(default_factory=list)
+    finished: bool = False
+    count: int = 0
+    guessed: int = 0
+    wrong_letters: int = 0
+    _words_iter: object = field(default=None, repr=False)
 
     def start(self, count=10):
         selected_words = self.get_words(count)
-
         if not selected_words:
-            return None
+            return None, None
 
         random.shuffle(selected_words)
-        self.words = iter(selected_words)
-        self.current = next(self.words)
+        self._words_iter = iter(selected_words)
+        self.current = next(self._words_iter)
 
         return self.current.anchor.capitalize(), [
             (pair.anchor, pair.response, pair.score)
@@ -36,13 +35,9 @@ class Guesser:
 
     def get_words(self, count):
         words = list(reversed(self.manager.db.get_words()))
-
         worst_words = list(
-            reversed(
-                sorted(words, key=attrgetter('score'))
-            )
+            reversed(sorted(words, key=attrgetter('score')))
         )
-
         return self.select(
             worst_words[:min(len(worst_words), 150)],
             count
@@ -51,34 +46,26 @@ class Guesser:
     def select(self, objects, count):
         if not objects:
             return []
-
         self.count = min(len(objects), count)
-
         if len(objects) < count:
             return objects
-
         results = []
-        for i in range(count):
+        for _ in range(count):
             pair = self.pick(objects)
             results.append(pair)
             objects.remove(pair)
-
         return results
 
     def pick(self, objects):
-        total = sum([obj.score for obj in objects])
+        total = sum(obj.score for obj in objects)
         for obj in objects:
             obj.probability = obj.score / total
-
         marker = min(1.0, random.expovariate(21))
         anchor = 0
-
         for obj in objects:
             if marker < anchor + obj.probability:
                 return obj
-            else:
-                anchor += obj.probability
-
+            anchor += obj.probability
         return objects[-1]
 
     def correct(self):
@@ -96,7 +83,7 @@ class Guesser:
     def next_word(self):
         try:
             self.new_words.append(self.current)
-            self.current = next(self.words)
+            self.current = next(self._words_iter)
         except StopIteration:
             self.finished = True
             self.finish()
@@ -105,21 +92,24 @@ class Guesser:
         self.manager.db.update_words(self.new_words)
         self.manager.stop()
 
-    def is_words_same(self, one, two):
-        one = one.lower()
-        two = two.lower()
+    @staticmethod
+    def normalize_french(text):
+        """Normalize French text for comparison.
+        Strips articles (le/la/l'/les/un/une/des) and extra whitespace.
+        """
+        text = text.lower().strip()
+        # Remove leading French articles
+        for article in ["l'", "les ", "la ", "le ", "un ", "une ", "des "]:
+            if text.startswith(article):
+                text = text[len(article):].strip()
+                break
+        return text
 
-        if one.startswith("une") and two.startswith("la"):
-            two = "une" + two[2:]
-        elif one.startswith("la") and two.startswith("une"):
-            two = "la" + two[3:]
-        elif one.startswith("un") and two.startswith("le"):
-            two = "un" + two[2:]
-        elif one.startswith("le") and two.startswith("un"):
-            two = "le" + two[2:]
-
-        return one.lower().encode('utf8') == two.lower().encode('utf8')
-
+    def is_words_same(self, guess, expected):
+        """Compare guess to expected answer, tolerant of article differences."""
+        g = self.normalize_french(guess)
+        e = self.normalize_french(expected)
+        return g.encode('utf8') == e.encode('utf8')
 
     def guess(self, word):
         current_word = self.current
@@ -135,7 +125,7 @@ class Guesser:
 
         return is_correct, self.finished, {
             "correction": res,
-            "round": self.current.anchor,
+            "round": self.current.anchor if self.current else "",
             "correct_count": self.guessed,
-            "error_rate": round(self.wrong_letters / self.count, 2)
+            "error_rate": round(self.wrong_letters / max(self.count, 1), 2)
         }

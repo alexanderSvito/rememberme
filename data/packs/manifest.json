@@ -1,0 +1,257 @@
+{
+  "greetings": {
+    "priority": 1,
+    "count": 30,
+    "file": "greetings.fr.json"
+  },
+  "numbers": {
+    "priority": 1,
+    "count": 112,
+    "file": "numbers.fr.json"
+  },
+  "colors": {
+    "priority": 2,
+    "count": 33,
+    "file": "colors.fr.json"
+  },
+  "family": {
+    "priority": 2,
+    "count": 53,
+    "file": "family.fr.json"
+  },
+  "food_drink": {
+    "priority": 2,
+    "count": 212,
+    "file": "food_drink.fr.json"
+  },
+  "time_calendar": {
+    "priority": 2,
+    "count": 70,
+    "file": "time_calendar.fr.json"
+  },
+  "body_health": {
+    "priority": 3,
+    "count": 95,
+    "file": "body_health.fr.json"
+  },
+  "clothes": {
+    "priority": 3,
+    "count": 55,
+    "file": "clothes.fr.json"
+  },
+  "common_verbs": {
+    "priority": 3,
+    "count": 602,
+    "file": "common_verbs.fr.json"
+  },
+  "house_home": {
+    "priority": 3,
+    "count": 57,
+    "file": "house_home.fr.json"
+  },
+  "school_education": {
+    "priority": 3,
+    "count": 71,
+    "file": "school_education.fr.json"
+  },
+  "emotions_personality": {
+    "priority": 4,
+    "count": 27,
+    "file": "emotions_personality.fr.json"
+  },
+  "sports_hobbies": {
+    "priority": 4,
+    "count": 38,
+    "file": "sports_hobbies.fr.json"
+  },
+  "technology": {
+    "priority": 4,
+    "count": 23,
+    "file": "technology.fr.json"
+  },
+  "town_places": {
+    "priority": 4,
+    "count": 37,
+    "file": "town_places.fr.json"
+  },
+  "travel_transport": {
+    "priority": 4,
+    "count": 68,
+    "file": "travel_transport.fr.json"
+  },
+  "jobs_professions": {
+    "priority": 5,
+    "count": 40,
+    "file": "jobs_professions.fr.json"
+  },
+  "nationalities_countries": {
+    "priority": 5,
+    "count": 64,
+    "file": "nationalities_countries.fr.json"
+  },
+  "weather_nature": {
+    "priority": 5,
+    "count": 67,
+    "file": "weather_nature.fr.json"
+  },
+  "mixed_01": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_01.fr.json"
+  },
+  "mixed_02": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_02.fr.json"
+  },
+  "mixed_03": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_03.fr.json"
+  },
+  "mixed_04": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_04.fr.json"
+  },
+  "mixed_05": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_05.fr.json"
+  },
+  "mixed_06": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_06.fr.json"
+  },
+  "mixed_07": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_07.fr.json"
+  },
+  "mixed_08": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_08.fr.json"
+  },
+  "mixed_09": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_09.fr.json"
+  },
+  "mixed_10": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_10.fr.json"
+  },
+  "mixed_11": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_11.fr.json"
+  },
+  "mixed_12": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_12.fr.json"
+  },
+  "mixed_13": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_13.fr.json"
+  },
+  "mixed_14": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_14.fr.json"
+  },
+  "mixed_15": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_15.fr.json"
+  },
+  "mixed_16": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_16.fr.json"
+  },
+  "mixed_17": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_17.fr.json"
+  },
+  "mixed_18": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_18.fr.json"
+  },
+  "mixed_19": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_19.fr.json"
+  },
+  "mixed_20": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_20.fr.json"
+  },
+  "mixed_21": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_21.fr.json"
+  },
+  "mixed_22": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_22.fr.json"
+  },
+  "mixed_23": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_23.fr.json"
+  },
+  "mixed_24": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_24.fr.json"
+  },
+  "mixed_25": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_25.fr.json"
+  },
+  "mixed_26": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_26.fr.json"
+  },
+  "mixed_27": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_27.fr.json"
+  },
+  "mixed_28": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_28.fr.json"
+  },
+  "mixed_29": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_29.fr.json"
+  },
+  "mixed_30": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_30.fr.json"
+  },
+  "mixed_31": {
+    "priority": 6,
+    "count": 50,
+    "file": "mixed_31.fr.json"
+  },
+  "mixed_32": {
+    "priority": 6,
+    "count": 14,
+    "file": "mixed_32.fr.json"
+  }
+}

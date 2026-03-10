@@ -1,18 +1,20 @@
+import logging
 import telebot
 import config
 from rememberme.manager import Manager
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot(config.TOKEN)
 sessions = {}
 
 
 def get_manager_or_default(message):
-    if message.from_user.id in sessions:
-        return sessions[message.from_user.id]
-    else:
-        manager = Manager(message.from_user.id)
-        sessions[message.from_user.id] = manager
-        return manager
+    uid = message.from_user.id
+    if uid not in sessions:
+        sessions[uid] = Manager(uid)
+    return sessions[uid]
 
 
 def with_manager(func):
@@ -22,21 +24,10 @@ def with_manager(func):
     return inner
 
 
-def start_required(func):
-    def inner(message, *args, **kwargs):
-        manager = get_manager_or_default(message)
-        if manager.is_play_mode():
-            return func(message, *args, **kwargs)
-        else:
-            return manager.not_a_game_error()
-    return inner
-
-
 @bot.message_handler(commands=['start'])
 @with_manager
 def handle_start(manager, message):
-    welcome = manager.start()
-    bot.send_message(message.chat.id, welcome)
+    bot.send_message(message.chat.id, manager.start())
 
 
 @bot.message_handler(commands=['help'])
@@ -50,11 +41,6 @@ def handle_help(manager, message):
 def handle_guess(manager, message):
     bot.send_message(message.chat.id, manager.get_guesser_start())
     word = manager.start_guesser(message.text)
-    if message.chat.id != 270126879:
-        bot.send_message(
-            270126879,
-            f"{message.from_user.username} начал игру"
-        )
     bot.send_message(message.chat.id, word, parse_mode="Markdown")
 
 
@@ -63,20 +49,6 @@ def handle_guess(manager, message):
 def handle_translate(manager, message):
     word = manager.translate(message.text)
     bot.send_message(message.chat.id, word)
-
-
-@bot.message_handler(commands=['play'])
-@with_manager
-def handle_play(manager, message):
-    response = manager.start_game(message.text)
-    bot.send_message(message.chat.id, response, parse_mode="Markdown")
-
-
-@bot.message_handler(commands=['conj'])
-@with_manager
-def handle_conj(manager, message):
-    response = manager.conj(message.text)
-    bot.send_message(message.chat.id, response, parse_mode="Markdown")
 
 
 @bot.message_handler(commands=['add'])
@@ -109,32 +81,34 @@ def handle_lang(manager, message):
 
 @bot.message_handler(commands=['addpack'])
 @with_manager
-def handle_lang(manager, message):
+def handle_addpack(manager, message):
     response = manager.add_pack(message.text)
     bot.send_message(message.chat.id, response)
 
 
 @bot.message_handler(commands=['listpacks'])
 @with_manager
-def handle_lang(manager, message):
+def handle_listpacks(manager, message):
     response = manager.list_packs(message.text)
     bot.send_message(message.chat.id, response)
 
 
 @bot.message_handler(commands=['stop'])
-@start_required
 @with_manager
 def handle_stop(manager, message):
-    bot.send_message(message.chat.id, manager.stop())
+    if manager.is_play_mode():
+        bot.send_message(message.chat.id, manager.stop())
+    else:
+        bot.send_message(message.chat.id, "No active session.")
 
 
 @bot.message_handler(content_types=["text"])
 @with_manager
-def repeat_all_messages(manager, message):
+def handle_text(manager, message):
     result = manager.dispatch(message.text)
     bot.send_message(message.chat.id, result, parse_mode="Markdown")
 
 
 if __name__ == '__main__':
+    logger.info("Bot starting...")
     bot.polling(none_stop=True)
-

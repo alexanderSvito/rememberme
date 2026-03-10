@@ -1,5 +1,9 @@
-.idea/**/__pycache_/**
-__pycache__
-
+__pycache__/
 *.pyc
-**.unison*
+*.pyo
+.idea/
+.DS_Store
+*.db
+.env
+build.log
+*.unison*

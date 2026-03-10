@@ -1,0 +1,11 @@
+services:
+  - type: worker
+    name: french-vocab-bot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: WORDS_DB_PATH
+        value: data/words_db.db
